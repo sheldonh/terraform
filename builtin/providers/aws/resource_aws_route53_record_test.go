@@ -66,6 +66,27 @@ func TestAccRoute53Record_basic(t *testing.T) {
 	})
 }
 
+func TestAccRoute53Record_output(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckRoute53RecordDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccRoute53RecordConfig,
+				Check: func(s *terraform.State) error {
+					got := s.RootModule().Outputs["fqdn"]
+					wanted := "www.notexample.com"
+					if got != wanted {
+						return fmt.Errorf("fqdn\nexpected: %s\ngot: %s", wanted, got)
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
 func TestAccRoute53Record_txtSupport(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
